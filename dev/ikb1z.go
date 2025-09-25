@@ -10,16 +10,7 @@ type slave interface {
 }
 
 type (
-	Ikb1z struct {
-		i2c     *machine.I2C
-		scl     machine.Pin
-		sda     machine.Pin
-		freq    uint32
-		init    bool
-		addr    uint16
-		read    []byte
-		payload []byte
-	}
+	Ikb1z Device
 )
 
 func (ikb Ikb1z) send() {
@@ -90,31 +81,19 @@ func (ikb *Ikb1z) Servo(m uint8, pos int16) *Ikb1z {
 // pins[0] = scl
 //
 // pins[1] = sda
-func NewIkb1z(pins *PinPack, freq uint32, i2c *machine.I2C) *Ikb1z {
+func NewIkb1z(cfg machine.I2CConfig) *Ikb1z {
 	var ikb *Ikb1z = new(Ikb1z)
-	if &pins[0] != nil && &pins[0] != &pins[1] {
-		ikb.scl = pins[0]
-	}
-	if &pins[1] != nil && &pins[1] != &pins[0] {
-		ikb.sda = pins[1]
-	}
 
-	if freq != 0 {
-		ikb.freq = freq
-	}
 	ikb.read = nil
 	ikb.addr = 0x48
-	if i2c != nil {
-		ikb.i2c = machine.I2C0
-		ikb.i2c.Configure(machine.I2CConfig{
-			SCL:       machine.Pin(ikb.scl),
-			SDA:       machine.Pin(ikb.sda),
-			Frequency: ikb.freq,
-		})
-	} else {
-		ikb.i2c = i2c
+
+	err := setI2cIfhave((*Device)(ikb), cfg)
+
+	if err != 0 {
+		println("(ikb1z) NewIkb1z() : set i2c config err ", err)
+		return nil
 	}
-	//	ikb.i2c = &i2c_
+
 	ikb.init = true
 	println("(ikb1z) Loaded")
 	return ikb

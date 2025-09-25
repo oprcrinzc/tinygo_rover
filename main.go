@@ -12,9 +12,17 @@ import (
 )
 
 func main() {
-	var ikb1z *dev.Ikb1z = dev.NewIkb1z(dev.NewPinPack(machine.GPIO22, machine.GPIO21), 100e3, nil)
+	var ikb1z *dev.Ikb1z = dev.NewIkb1z(machine.I2CConfig{
+		SCL:       machine.GPIO22,
+		SDA:       machine.GPIO21,
+		Frequency: 100e3,
+	})
 
-	var pcf8574 *dev.Pcf8574 = dev.NewPcf8574(0x20, dev.NewPinPack(machine.GPIO22, machine.GPIO21), 100e3, nil)
+	var pcf8574 *dev.Pcf8574 = dev.NewPcf8574(0x20, machine.I2CConfig{
+		SCL:       machine.GPIO22,
+		SDA:       machine.GPIO21,
+		Frequency: 100e3,
+	})
 	// for {
 	/*	ikb1z.Servo(10, 0)
 		time.Sleep(time.Second * 3)
