@@ -46,7 +46,7 @@ func (p *Pcf8574) SetFlag(f uint8) {
 	p.flag = f
 }
 
-func NewPcf8574(addr uint16, cfg machine.I2CConfig) *Pcf8574 {
+func NewPcf8574(addr uint16, cfg machine.I2CConfig, channel uint8) *Pcf8574 {
 	var p *Pcf8574 = new(Pcf8574)
 
 	p.read = make([]byte, 1)
@@ -54,7 +54,7 @@ func NewPcf8574(addr uint16, cfg machine.I2CConfig) *Pcf8574 {
 	p.payload[0] = 0x00
 	p.addr = addr
 
-	err := setI2cIfhave((*Device)(p), cfg)
+	err := setI2cIfhave((*Device)(p), cfg, channel)
 
 	if err != 0 {
 		println("(pcf8574) NewPcf8574() : set i2c config err ", err)

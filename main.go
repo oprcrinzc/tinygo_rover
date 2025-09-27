@@ -16,13 +16,13 @@ func main() {
 		SCL:       machine.GPIO3,
 		SDA:       machine.GPIO2,
 		Frequency: 100e3,
-	})
+	}, 1)
 
 	var pcf8574 *dev.Pcf8574 = dev.NewPcf8574(0x20, machine.I2CConfig{
 		SCL:       machine.GPIO3,
 		SDA:       machine.GPIO2,
 		Frequency: 100e3,
-	})
+	}, 1)
 	// for {
 	/*	ikb1z.Servo(10, 0)
 		time.Sleep(time.Second * 3)

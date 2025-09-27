@@ -26,8 +26,14 @@ type (
 	}
 )
 
-func (dev *Device) SetI2c(cfg machine.I2CConfig) {
-	dev.i2c = machine.I2C1
+func (dev *Device) SetI2c(cfg machine.I2CConfig, channel uint8) {
+	if channel == 0 {
+		dev.i2c = machine.I2C0
+	} else if channel == 1 {
+		dev.i2c = machine.I2C1
+	} else {
+		dev.i2c = machine.I2C0
+	}
 	dev.i2c.Configure(cfg)
 	dev.scl = cfg.SCL
 	dev.sda = cfg.SDA
@@ -41,7 +47,7 @@ func NewPinPack(a, b machine.Pin) *PinPack {
 	return &p_
 }
 
-func setI2cIfhave(dev *Device, cfg machine.I2CConfig) int {
+func setI2cIfhave(dev *Device, cfg machine.I2CConfig, channel uint8) int {
 	err := 0
 	if cfg.SCL == 0 {
 		err += 0x1
@@ -57,7 +63,7 @@ func setI2cIfhave(dev *Device, cfg machine.I2CConfig) int {
 	}
 
 	if err == 0 {
-		dev.SetI2c(cfg)
+		dev.SetI2c(cfg, channel)
 	}
 	return err
 }
