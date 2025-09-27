@@ -27,6 +27,7 @@ type (
 )
 
 func (dev *Device) SetI2c(cfg machine.I2CConfig) {
+	dev.i2c = machine.I2C1
 	dev.i2c.Configure(cfg)
 	dev.scl = cfg.SCL
 	dev.sda = cfg.SDA

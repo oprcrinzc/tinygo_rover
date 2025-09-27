@@ -13,14 +13,14 @@ import (
 
 func main() {
 	var ikb1z *dev.Ikb1z = dev.NewIkb1z(machine.I2CConfig{
-		SCL:       machine.GPIO22,
-		SDA:       machine.GPIO21,
+		SCL:       machine.GPIO3,
+		SDA:       machine.GPIO2,
 		Frequency: 100e3,
 	})
 
 	var pcf8574 *dev.Pcf8574 = dev.NewPcf8574(0x20, machine.I2CConfig{
-		SCL:       machine.GPIO22,
-		SDA:       machine.GPIO21,
+		SCL:       machine.GPIO3,
+		SDA:       machine.GPIO2,
 		Frequency: 100e3,
 	})
 	// for {
