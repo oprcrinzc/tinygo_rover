@@ -32,7 +32,7 @@ func (dev *Device) SetI2c(cfg machine.I2CConfig, channel uint8) {
 	} else if channel == 1 {
 		dev.i2c = machine.I2C1
 	} else {
-		dev.i2c = machine.I2C0
+		dev.i2c = &machine.I2C{}
 	}
 	dev.i2c.Configure(cfg)
 	dev.scl = cfg.SCL
