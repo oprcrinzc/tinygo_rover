@@ -81,13 +81,13 @@ func (ikb *Ikb1z) Servo(m uint8, pos int16) *Ikb1z {
 // pins[0] = scl
 //
 // pins[1] = sda
-func NewIkb1z(cfg machine.I2CConfig) *Ikb1z {
+func NewIkb1z(cfg machine.I2CConfig, channel uint8) *Ikb1z {
 	var ikb *Ikb1z = new(Ikb1z)
 
 	ikb.read = nil
 	ikb.addr = 0x48
 
-	err := setI2cIfhave((*Device)(ikb), cfg)
+	err := setI2cIfhave((*Device)(ikb), cfg, channel)
 
 	if err != 0 {
 		println("(ikb1z) NewIkb1z() : set i2c config err ", err)
