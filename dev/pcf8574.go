@@ -65,3 +65,5 @@ func NewPcf8574(addr uint16, cfg machine.I2CConfig, channel uint8) *Pcf8574 {
 
 	return p
 }
+
+// before TEST
