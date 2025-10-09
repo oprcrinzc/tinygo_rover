@@ -19,10 +19,10 @@ func main() {
 	}, 1)
 
 	var pcf8574 *dev.Pcf8574 = dev.NewPcf8574(0x20, machine.I2CConfig{
-		SCL:       machine.GPIO3,
-		SDA:       machine.GPIO2,
-		Frequency: 400e3,
-	}, 1)
+		SCL:       machine.GPIO9,
+		SDA:       machine.GPIO8,
+		Frequency: 100e3,
+	}, 0)
 	// for {
 	/*	ikb1z.Servo(10, 0)
 		time.Sleep(time.Second * 3)
@@ -31,16 +31,24 @@ func main() {
 		ikb1z.Servo(10, 180)
 	*/
 
-	pcf8574.SetFlag(0x01)
+	machine.GPIO13.Configure(machine.PinConfig{Mode: machine.PinOutput})
+	machine.GPIO13.High()
+	ikb1z.Servo(10, 0)
+	pcf8574.SetFlag(0x00)
+	pcf8574.Set(0xFF)
 	println("run . . . ")
 	for {
 
-		ikb1z.Servo(10, 0)
-		ikb1z.Servo(15, 180)
+		/*	ikb1z.Servo(10, 0)
+			ikb1z.Servo(15, 180)
+			time.Sleep(time.Second * 1)
+			ikb1z.Servo(10, 180)
+			ikb1z.Servo(15, 0) */
 		time.Sleep(time.Second * 1)
-		ikb1z.Servo(10, 180)
-		ikb1z.Servo(15, 0)
-		time.Sleep(time.Second * 1)
+
+		pcf8574.Read(7)
+		println(pcf8574.Get())
+
 		// pcf8574.Write(1, 1).Write(1, 0).Write(0, 1)
 	}
 

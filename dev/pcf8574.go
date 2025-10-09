@@ -31,8 +31,18 @@ func (p *Pcf8574) Write(pin, value uint8) *Pcf8574 {
 	return p
 }
 
+func (p *Pcf8574) Set(value uint8) *Pcf8574 {
+	if value >= 0 && value <= 255 {
+		p.payload[0] = value
+		p.send()
+	}
+	return p
+}
+
 func (p *Pcf8574) Read(pin uint8) {
 	err := p.i2c.ReadRegister(uint8(p.addr), 0x00, p.read)
+	// err := p.i2c.Tx(p.addr, []byte{0}, p.read)
+	// err := p.i2c.ReadRegister(p.addr)
 	if err != nil {
 		println("(Pcf8574) Read() : error = ", err)
 	}
