@@ -9,7 +9,7 @@ type (
 )
 
 func (p *Pcf8574) send() {
-	err := p.i2c.Tx(p.addr, p.payload, p.read)
+	err := p.i2c.Tx(p.addr, p.payload, nil)
 	if err != nil {
 		println("(pcf8574) send() : error =", err)
 	}
@@ -40,8 +40,8 @@ func (p *Pcf8574) Set(value uint8) *Pcf8574 {
 }
 
 func (p *Pcf8574) Read(pin uint8) {
-	err := p.i2c.ReadRegister(uint8(p.addr), 0x00, p.read)
-	// err := p.i2c.Tx(p.addr, []byte{0}, p.read)
+	// err := p.i2c.ReadRegister(uint8(p.addr), 0x00, p.read)
+	err := p.i2c.Tx(p.addr, nil, p.read)
 	// err := p.i2c.ReadRegister(p.addr)
 	if err != nil {
 		println("(Pcf8574) Read() : error = ", err)
