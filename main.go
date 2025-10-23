@@ -1,14 +1,18 @@
 package main
 
 import (
+	"image/color"
 	"machine"
 	"time"
 
 	//"tinygo.org/x/machine"
 
 	dev "rover/dev"
+
+	"tinygo.org/x/drivers/ssd1306"
 	//
 	// "machine"
+	//
 )
 
 var ikb1z *dev.Ikb1z = dev.NewIkb1z(machine.I2CConfig{
@@ -41,9 +45,13 @@ func main() {
 	pcf8574.SetFlag(0x00)
 	pcf8574.Set(0xFF)
 	println("run . . . ")
+
 	go Blinking()
 	go ReadLine()
 	go Servo()
+	go Oled()
+
+	// loop for life
 	for {
 		// ikb1z.Servo(10, 0)
 		time.Sleep(time.Second * 2)
@@ -51,6 +59,25 @@ func main() {
 
 		// pcf8574.Write(1, 1).Write(1, 0).Write(0, 1)
 		//}
+	}
+}
+
+func Oled() {
+	var ssd1306_i2c1 *machine.I2C = machine.I2C1
+	ssd1306_i2c1.Configure(machine.I2CConfig{
+		SCL: machine.GPIO19,
+		SDA: machine.GPIO18,
+	})
+	var oled *ssd1306.Device = ssd1306.NewI2C(machine.I2C1)
+
+	oled.Configure(ssd1306.Config{Address: 0x3c, Width: 128, Height: 64})
+	oled.ClearBuffer()
+	for {
+		oled.ClearDisplay()
+		oled.SetPixel(0, 0, color.RGBA{255, 255, 255, 255})
+		// oled.FillRectangle(20, 20, 20, 20, color.RGBA{255, 255, 255, 255})
+
+		oled.Display()
 	}
 }
 
