@@ -8,6 +8,7 @@ import (
 	//"tinygo.org/x/machine"
 
 	dev "rover/dev"
+	tcs3472 "rover/tcs"
 
 	"tinygo.org/x/drivers/ssd1306"
 	//
@@ -16,8 +17,8 @@ import (
 )
 
 var ikb1z *dev.Ikb1z = dev.NewIkb1z(machine.I2CConfig{
-	SCL:       machine.GPIO19,
-	SDA:       machine.GPIO18,
+	SCL:       machine.GPIO15,
+	SDA:       machine.GPIO14,
 	Frequency: 400e3,
 }, 1)
 
@@ -49,17 +50,36 @@ func main() {
 	go Blinking()
 	go ReadLine()
 	go Servo()
-	go Oled()
+	//	go Oled()
 
 	// loop for life
-	for {
-		// ikb1z.Servo(10, 0)
-		time.Sleep(time.Second * 2)
-		// ikb1z.Servo(10, 180)
+	//
 
-		// pcf8574.Write(1, 1).Write(1, 0).Write(0, 1)
-		//}
+	i2c := *machine.I2C0
+	i2c.Configure(machine.I2CConfig{Frequency: 400_000})
+
+	sensor := tcs3472.New(i2c)
+	sensor.Enable()
+	sensor.SetIntegrationTime(0xFF) // longest integration time
+	sensor.SetGain(0x01)            // 4x gain
+
+	for {
+		c, r, g, b, _ := sensor.ReadRawData()
+		println("C:", c, "R:", r, "G:", g, "B:", b)
+		time.Sleep(500 * time.Millisecond)
 	}
+
+	/*
+		for {
+			ikb1z.Motor(1, 100)
+			time.Sleep(time.Second * 2)
+			// ikb1z.Servo(10, 180)
+			ikb1z.Motor(1, 0)
+			time.Sleep(time.Second)
+			// pcf8574.Write(1, 1).Write(1, 0).Write(0, 1)
+			//}
+		}
+	*/
 }
 
 func Oled() {
@@ -85,6 +105,7 @@ func Servo() {
 	for {
 		ikb1z.Servo(10, 0)
 		ikb1z.Servo(15, 180)
+		ikb1z.Motor(1, 100)
 		time.Sleep(time.Second * 1)
 		ikb1z.Servo(10, 180)
 		ikb1z.Servo(15, 0)
@@ -98,7 +119,7 @@ func ReadLine() {
 		print("IR")
 		print(pcf8574.Get())
 		print("\n")
-
+		time.Sleep(time.Millisecond * 250)
 	}
 }
 
