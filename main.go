@@ -8,7 +8,6 @@ import (
 	//"tinygo.org/x/machine"
 
 	dev "rover/dev"
-	tcs3472 "rover/tcs"
 
 	"tinygo.org/x/drivers/ssd1306"
 	//
@@ -22,9 +21,16 @@ var ikb1z *dev.Ikb1z = dev.NewIkb1z(machine.I2CConfig{
 	Frequency: 400e3,
 }, 1)
 
-var pcf8574 *dev.Pcf8574 = dev.NewPcf8574(0x20, machine.I2CConfig{
+/*var pcf8574 *dev.Pcf8574 = dev.NewPcf8574(0x20, machine.I2CConfig{
 	SCL:       machine.GPIO17,
 	SDA:       machine.GPIO16,
+	Frequency: 100e3,
+}, 0)
+*/
+
+var tcs34725 *dev.Tcs34725 = dev.NewTcs34725(machine.I2CConfig{
+	SCL:       machine.GPIO1,
+	SDA:       machine.GPIO0,
 	Frequency: 100e3,
 }, 0)
 
@@ -43,30 +49,49 @@ func main() {
 	machine.GPIO20.High()
 
 	ikb1z.Servo(10, 0)
-	pcf8574.SetFlag(0x00)
-	pcf8574.Set(0xFF)
+	//	pcf8574.SetFlag(0x00)
+	//	pcf8574.Set(0xFF)
 	println("run . . . ")
 
-	go Blinking()
-	go ReadLine()
-	go Servo()
+	tcs34725.Init()
+
+	// go Blinking()
+	// go GetColor()
+	//	go ReadLine()
+	//	go Servo()
 	//	go Oled()
 
 	// loop for life
 	//
 
-	i2c := *machine.I2C0
-	i2c.Configure(machine.I2CConfig{Frequency: 400_000})
+	/*const (
+		AddrTCS3472 = 0x29
+		commandBit  = 0x80
+		regEnable   = 0x00
+		regATime    = 0x01
+		regControl  = 0x0F
+		regCDATAL   = 0x14
+		regRDATAL   = 0x16
+		regGDATAL   = 0x18
+		regBDATAL   = 0x1A
+		enablePON   = 0x01
+		enableAEN   = 0x02
+	)
+	tcs34725.Write8(regEnable, enablePON)
+	time.Sleep(3 * time.Millisecond)
+	tcs34725.Write8(regEnable, enablePON|enableAEN)
+	tcs34725.Write8(regATime, 0xD5)
+	tcs34725.Write8(regControl, 0x01)
 
-	sensor := tcs3472.New(i2c)
-	sensor.Enable()
-	sensor.SetIntegrationTime(0xFF) // longest integration time
-	sensor.SetGain(0x01)            // 4x gain
-
+	time.Sleep(200 * time.Millisecond)
+	*/
 	for {
-		c, r, g, b, _ := sensor.ReadRawData()
+		//	println("Hi")
+
+		r, g, b, c := tcs34725.GetRGBC()
 		println("C:", c, "R:", r, "G:", g, "B:", b)
 		time.Sleep(500 * time.Millisecond)
+
 	}
 
 	/*
@@ -80,6 +105,16 @@ func main() {
 			//}
 		}
 	*/
+}
+
+func GetColor() {
+	for {
+		println("Hi")
+		r, g, b, c := tcs34725.GetRGBC()
+		println("C:", c, "R:", r, "G:", g, "B:", b)
+		time.Sleep(500 * time.Millisecond)
+
+	}
 }
 
 func Oled() {
@@ -113,6 +148,7 @@ func Servo() {
 	}
 }
 
+/*
 func ReadLine() {
 	for {
 		pcf8574.Read(7)
@@ -121,7 +157,7 @@ func ReadLine() {
 		print("\n")
 		time.Sleep(time.Millisecond * 250)
 	}
-}
+}*/
 
 func Blinking() {
 	for {

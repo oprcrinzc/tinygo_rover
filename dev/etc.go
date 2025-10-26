@@ -49,10 +49,10 @@ func NewPinPack(a, b machine.Pin) *PinPack {
 
 func setI2cIfhave(dev *Device, cfg machine.I2CConfig, channel uint8) int {
 	err := 0
-	if cfg.SCL == 0 {
+	if cfg.SCL < 0 {
 		err += 0x1
 	}
-	if cfg.SDA == 0 {
+	if cfg.SDA < 0 {
 		err += 0x10
 	}
 	if cfg.SDA == cfg.SCL {
