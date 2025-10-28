@@ -103,9 +103,10 @@ func main() {
 		if lines == 0b0 {
 			speed_1 = 0
 			speed_2 = 0
+		} else if lines == 0b01000 {
 		} else {
-			speed_1 = 100
-			speed_2 = 100
+			speed_1 = 0
+			speed_2 = 0
 		}
 
 		//	println("Hi")
@@ -140,6 +141,10 @@ func GetColor() {
 
 	}
 }*/
+
+// tracking line whith pcf8574 pin 7, 4
+func LineTrack() {
+}
 
 func Oled() {
 	var ssd1306_i2c1 *machine.I2C = machine.I2C1
