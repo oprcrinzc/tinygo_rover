@@ -21,18 +21,19 @@ var ikb1z *dev.Ikb1z = dev.NewIkb1z(machine.I2CConfig{
 	Frequency: 400e3,
 }, 1)
 
-/*var pcf8574 *dev.Pcf8574 = dev.NewPcf8574(0x20, machine.I2CConfig{
+var pcf8574 *dev.Pcf8574 = dev.NewPcf8574(0x20, machine.I2CConfig{
 	SCL:       machine.GPIO17,
 	SDA:       machine.GPIO16,
 	Frequency: 100e3,
 }, 0)
-*/
 
+/*
 var tcs34725 *dev.Tcs34725 = dev.NewTcs34725(machine.I2CConfig{
 	SCL:       machine.GPIO1,
 	SDA:       machine.GPIO0,
 	Frequency: 100e3,
 }, 0)
+*/
 
 func main() {
 	// for {
@@ -49,15 +50,15 @@ func main() {
 	machine.GPIO20.High()
 
 	ikb1z.Servo(10, 0)
-	//	pcf8574.SetFlag(0x00)
-	//	pcf8574.Set(0xFF)
+	pcf8574.SetFlag(0x00)
+	pcf8574.Set(0xFF)
 	println("run . . . ")
 
-	tcs34725.Init()
+	//	tcs34725.Init()
 
-	// go Blinking()
+	go Blinking()
 	// go GetColor()
-	//	go ReadLine()
+	// go ReadLine()
 	//	go Servo()
 	//	go Oled()
 
@@ -85,13 +86,35 @@ func main() {
 
 	time.Sleep(200 * time.Millisecond)
 	*/
+	//	ikb1z.Motor(1, 100)
+
+	speed_1 := 100
+	speed_2 := 100
+
 	for {
+
+		ikb1z.Motor(2, int8(speed_1))
+		time.Sleep(time.Millisecond * 20)
+		ikb1z.Motor(1, int8(speed_2))
+
+		pcf8574.Read(7)
+		lines := pcf8574.Get()
+		lines = lines >> 3
+		if lines == 0b0 {
+			speed_1 = 0
+			speed_2 = 0
+		} else {
+			speed_1 = 100
+			speed_2 = 100
+		}
+
 		//	println("Hi")
-
-		r, g, b, c := tcs34725.GetRGBC()
-		println("C:", c, "R:", r, "G:", g, "B:", b)
-		time.Sleep(500 * time.Millisecond)
-
+		/*
+			r, g, b, c := tcs34725.GetRGBC()
+			println("C:", c, "R:", r, "G:", g, "B:", b)
+			time.Sleep(500 * time.Millisecond)
+		*/
+		time.Sleep(time.Millisecond * 200)
 	}
 
 	/*
@@ -107,6 +130,7 @@ func main() {
 	*/
 }
 
+/*
 func GetColor() {
 	for {
 		println("Hi")
@@ -115,7 +139,7 @@ func GetColor() {
 		time.Sleep(500 * time.Millisecond)
 
 	}
-}
+}*/
 
 func Oled() {
 	var ssd1306_i2c1 *machine.I2C = machine.I2C1
@@ -148,7 +172,6 @@ func Servo() {
 	}
 }
 
-/*
 func ReadLine() {
 	for {
 		pcf8574.Read(7)
@@ -157,7 +180,7 @@ func ReadLine() {
 		print("\n")
 		time.Sleep(time.Millisecond * 250)
 	}
-}*/
+}
 
 func Blinking() {
 	for {
