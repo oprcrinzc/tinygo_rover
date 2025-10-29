@@ -39,7 +39,7 @@ func (p *Pcf8574) Set(value uint8) *Pcf8574 {
 	return p
 }
 
-func (p *Pcf8574) Read(pin uint8) {
+func (p *Pcf8574) Read() {
 	// err := p.i2c.ReadRegister(uint8(p.addr), 0x00, p.read)
 	err := p.i2c.Tx(p.addr, nil, p.read)
 	// err := p.i2c.ReadRegister(p.addr)
