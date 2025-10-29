@@ -96,9 +96,9 @@ func main() {
 
 		speed_1, speed_2 = StupidLineTrack()
 
-		ikb1z.Motor(2, int8(speed_1))
+		ikb1z.Motor(2, int8(speed_2))
 		time.Sleep(time.Millisecond * 20)
-		ikb1z.Motor(1, int8(speed_2))
+		ikb1z.Motor(1, int8(speed_1))
 
 		// time.Sleep(time.Second * 10)
 
@@ -122,7 +122,7 @@ func main() {
 			println("C:", c, "R:", r, "G:", g, "B:", b)
 			time.Sleep(500 * time.Millisecond)
 		*/
-		time.Sleep(time.Millisecond * 200)
+		//time.Sleep(time.Millisecond * 200)
 	}
 
 	/*
@@ -186,7 +186,7 @@ var (
 func StupidLineTrack() (L, R int) {
 	pcf8574.Read()
 	raw := pcf8574.Get() >> 3 // 5 bits
-	err := int(27) - int(raw)
+	err := int(raw) - int(27)
 
 	p := err
 	I += int64(err)
@@ -194,24 +194,36 @@ func StupidLineTrack() (L, R int) {
 
 	if err == 0 {
 		I = 0
-		L = 40
-		R = 40
+		L = 100
+		R = 100
 		return L, R
 	}
 
 	println("StupidLineTrack: ", raw, " ERR: ", err)
 	speed := float32(p)*Kp + float32(I)*Ki + float32(d)*Kd
 
-	R = int(40 + speed)
-	L = int(40 - speed)
-
+	R = int(100 + speed)
+	L = int(100 - speed)
+	Perr = err
+	if R > 100 {
+		R = 100
+	}
+	if R < -100 {
+		R = -100
+	}
+	if L > 100 {
+		L = 100
+	}
+	if L < -100 {
+		L = -100
+	}
 	return L, R
 }
 
 var (
-	Kp float32 = 1.0
-	Ki float32 = 0.5
-	Kd float32 = 1.5
+	Kp float32 = 10.0
+	Ki float32 = 0.05 // 0.1
+	Kd float32 = 15
 
 	I     int64
 	Perr  int
