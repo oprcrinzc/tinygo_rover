@@ -221,9 +221,9 @@ func StupidLineTrack() (L, R int) {
 }
 
 var (
-	Kp float32 = 10.0
-	Ki float32 = 0.05 // 0.1
-	Kd float32 = 15
+	Kp float32 = 15.0
+	Ki float32 = 0.1 // 0.1
+	Kd float32 = 5
 
 	I     int64
 	Perr  int
